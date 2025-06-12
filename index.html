@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tool Dự Đoán Tài Xỉu AI - SumClub</title>
+    <style>
+        body {
+            background-color: black;
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 48px;
+            background: linear-gradient(270deg, #ff00cc, #3333ff, #00ffcc, #ffcc00, #ff3300, #cc00ff);
+            background-size: 800% 800%;
+            animation: gradientShift 10s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        input[type="text"] {
+            padding: 16px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+            border: none;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 16px 30px;
+            font-size: 24px;
+            background: linear-gradient(270deg, #ff00cc, #3333ff, #00ffcc, #ffcc00, #ff3300, #cc00ff);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            animation: gradientShift 10s ease infinite;
+        }
+
+        #result {
+            margin-top: 40px;
+            font-size: 36px;
+        }
+
+        .footer {
+            margin-top: 80px;
+            font-size: 26px;
+            font-weight: bold;
+            background: linear-gradient(270deg, #ff00cc, #3333ff, #00ffcc, #ffcc00, #ff3300, #cc00ff);
+            background-size: 800% 800%;
+            animation: gradientShift 10s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Dự Đoán Tài Xỉu AI - SumClub</h1>
+    <input type="text" id="input" placeholder="Nhập 10 kết quả gần nhất (cách nhau bằng dấu phẩy)">
+    <br>
+    <button onclick="predict()">Dự Đoán</button>
+    <div id="result"></div>
+    <div class="footer">cre Trần Quốc Trịnh Đẹp Trai</div>
+
+    <script>
+        function predict() {
+            const input = document.getElementById("input").value;
+            const values = input.split(",").map(v => parseInt(v.trim())).filter(v => !isNaN(v));
+            let resultText = "";
+
+            if (values.length !== 10) {
+                resultText = "⚠️ Vui lòng nhập đúng 10 số!";
+            } else {
+                // Đếm chuỗi Tài/Xỉu
+                const history = values.map(v => v >= 11 ? "T" : "X");
+                let last3 = history.slice(-3).join("");
+                let prediction = "";
+                let percent = 50;
+
+                // Dự đoán theo mẫu cầu
+                if (last3 === "XXX") {
+                    prediction = "TÀI";
+                    percent = 90;
+                } else if (last3 === "TTT") {
+                    prediction = "XỈU";
+                    percent = 85;
+                } else if (last3 === "TXX" || last3 === "XXT") {
+                    prediction = "TÀI";
+                    percent = 80;
+                } else if (last3 === "XTT" || last3 === "TTX") {
+                    prediction = "XỈU";
+                    percent = 80;
+                } else {
+                    // Dựa theo tỷ lệ Tài/Xỉu trong 10 số
+                    let tai = history.filter(h => h === "T").length;
+                    let xiu = history.filter(h => h === "X").length;
+                    if (tai > xiu) {
+                        prediction = "XỈU";
+                        percent = 65;
+                    } else if (xiu > tai) {
+                        prediction = "TÀI";
+                        percent = 65;
+                    } else {
+                        prediction = "KHÓ XÁC ĐỊNH";
+                        percent = 50;
+                    }
+                }
+
+                resultText = `🔮 Dự đoán: <strong>${prediction}</strong> – Xác suất: <strong>${percent}%</strong>`;
+            }
+
+            document.getElementById("result").innerHTML = resultText;
+        }
+    </script>
+</body>
+</html>
